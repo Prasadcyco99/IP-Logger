@@ -1,0 +1,28 @@
+<?php
+// Get the visitor IP address
+function getUserIP() {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        return $_SERVER['REMOTE_ADDR'];
+    }
+}
+
+// Get the IP
+$ip = getUserIP();
+
+// Optional: Get additional data (e.g., location info using an external API)
+$details = file_get_contents("http://ip-api.com/json/{$ip}");
+$data = json_decode($details, true);
+
+// Prepare log entry
+$logData = "IP: " . $ip . " | Country: " . $data['country'] . " | City: " . $data['city'] . " | ISP: " . $data['isp'] . " | Time: " . date("Y-m-d H:i:s") . "\n";
+
+// Save to a log file
+file_put_contents("visitor_log.txt", $logData, FILE_APPEND);
+
+// Optional: Show something to the user
+echo "Welcome to the website!";
+?>
